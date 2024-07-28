@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 ENTITY_DESCRIPTIONS = (
     SwitchEntityDescription(
         key="doorking_1812ap",
-        name="Doorking 1812AP",
-        icon="mdi:format-quote-close",
+        name="Doorking 1812AP Gate Controller",
+        icon="mdi:gate",
     ),
 )
 
@@ -52,16 +52,18 @@ class Doorking1812APSwitch(Doorking1812APEntity, SwitchEntity):
         self.entity_description = entity_description
 
     @property
-    def is_on(self) -> bool:
+    def is_on(self) -> bool | None:
         """Return true if the switch is on."""
-        return self.coordinator.data.get("title", "") == "foo"
+        return self.coordinator.data.get("open", "")
 
     async def async_turn_on(self, **_: Any) -> None:
         """Turn on the switch."""
-        await self.coordinator.config_entry.runtime_data.client.async_set_title("bar")
+        await self.coordinator.config_entry.runtime_data.client.async_open_gate()
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **_: Any) -> None:
         """Turn off the switch."""
-        await self.coordinator.config_entry.runtime_data.client.async_set_title("foo")
+        await self.coordinator.config_entry.runtime_data.client.async_open_gate(
+            close_gate=True
+        )
         await self.coordinator.async_request_refresh()

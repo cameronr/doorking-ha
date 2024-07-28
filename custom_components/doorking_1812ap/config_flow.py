@@ -29,7 +29,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         _errors = {}
         if user_input is not None:
             try:
-                await self._test_credentials(
+                await self._test_connection(
                     ip_address=user_input[CONF_IP_ADDRESS],
                 )
             except Doorking1812APApiClientCommunicationError as exception:
@@ -61,10 +61,14 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=_errors,
         )
 
-    async def _test_credentials(self, ip_address: str) -> None:
+    async def _test_connection(self, ip_address: str) -> None:
         """Validate credentials."""
         client = Doorking1812APApiClient(
             ip_address=ip_address,
             session=async_create_clientsession(self.hass),
         )
-        await client.async_get_data()
+
+        # connect to server
+        # try to read gate status
+
+        await client.async_get_state()
