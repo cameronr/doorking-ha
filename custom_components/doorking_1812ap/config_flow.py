@@ -68,7 +68,4 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             session=async_create_clientsession(self.hass),
         )
 
-        # connect to server
-        # try to read gate status
-
-        await client.async_get_state()
+        await client.async_get_data()
