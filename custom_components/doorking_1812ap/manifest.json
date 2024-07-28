@@ -1,0 +1,12 @@
+{
+  "domain": "doorking_1812ap",
+  "name": "Doorking 1812AP",
+  "integration_type": "device",
+  "codeowners": ["@cameronr"],
+  "config_flow": true,
+  "documentation": "https://github.com/cameronr/doorking-ha",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/cameronr/doorking-ha/issues",
+  "version": "0.0.0"
+}
+

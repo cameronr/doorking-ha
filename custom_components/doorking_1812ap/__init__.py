@@ -1,21 +1,21 @@
 """
-Custom integration to integrate integration_blueprint with Home Assistant.
+Custom integration to integrate doorking_1812ap with Home Assistant.
 
 For more details about this integration, please refer to
-https://github.com/ludeeus/integration_blueprint
+https://github.com/cameronr/doorking-ha
 """
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
+from homeassistant.const import CONF_IP_ADDRESS, Platform
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
-from .api import IntegrationBlueprintApiClient
-from .coordinator import BlueprintDataUpdateCoordinator
-from .data import IntegrationBlueprintData
+from .api import Doorking1812APApiClient
+from .coordinator import Doorking1812APDataUpdateCoordinator
+from .data import Doorking1812APData
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -23,8 +23,6 @@ if TYPE_CHECKING:
     from .data import IntegrationBlueprintConfigEntry
 
 PLATFORMS: list[Platform] = [
-    Platform.SENSOR,
-    Platform.BINARY_SENSOR,
     Platform.SWITCH,
 ]
 
@@ -35,13 +33,12 @@ async def async_setup_entry(
     entry: IntegrationBlueprintConfigEntry,
 ) -> bool:
     """Set up this integration using UI."""
-    coordinator = BlueprintDataUpdateCoordinator(
+    coordinator = Doorking1812APDataUpdateCoordinator(
         hass=hass,
     )
-    entry.runtime_data = IntegrationBlueprintData(
-        client=IntegrationBlueprintApiClient(
-            username=entry.data[CONF_USERNAME],
-            password=entry.data[CONF_PASSWORD],
+    entry.runtime_data = Doorking1812APData(
+        client=Doorking1812APApiClient(
+            ip_address=entry.data[CONF_IP_ADDRESS],
             session=async_get_clientsession(hass),
         ),
         integration=async_get_loaded_integration(hass, entry.domain),
