@@ -6,9 +6,6 @@ import asyncio
 import socket
 from typing import Any
 
-import aiohttp
-import async_timeout
-
 from .const import LOGGER
 
 
@@ -20,11 +17,6 @@ class Doorking1812APApiClientCommunicationError(
     Doorking1812APApiClientError,
 ):
     """Exception to indicate a communication error."""
-
-
-def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
-    """Verify that the response is valid."""
-    response.raise_for_status()
 
 
 UNEXPECTED_DATA_ERROR = "Unexpected data received: {}"
@@ -44,11 +36,9 @@ class Doorking1812APApiClient:
     def __init__(
         self,
         ip_address: str,
-        session: aiohttp.ClientSession,
     ) -> None:
         """Sample API Client."""
         self._ip_address = ip_address
-        self._session = session
 
     async def connect_to_server(
         self,
@@ -109,6 +99,8 @@ class Doorking1812APApiClient:
             LOGGER.debug("gate is unknown")
             _raise_unexpected_data_error(data)
 
+        except Doorking1812APApiClientCommunicationError:
+            raise
         except Exception as exception:  # pylint: disable=broad-except
             msg = f"Something really wrong happened! - {exception}"
             raise Doorking1812APApiClientError(
@@ -131,41 +123,8 @@ class Doorking1812APApiClient:
             writer.close()
             await writer.wait_closed()
 
-        except Exception as exception:  # pylint: disable=broad-except
-            msg = f"Something really wrong happened! - {exception}"
-            raise Doorking1812APApiClientError(
-                msg,
-            ) from exception
-
-    async def _api_wrapper(
-        self,
-        method: str,
-        url: str,
-        data: dict | None = None,
-        headers: dict | None = None,
-    ) -> Any:
-        """Get information from the API."""
-        try:
-            async with async_timeout.timeout(10):
-                response = await self._session.request(
-                    method=method,
-                    url=url,
-                    headers=headers,
-                    json=data,
-                )
-                _verify_response_or_raise(response)
-                return await response.json()
-
-        except TimeoutError as exception:
-            msg = f"Timeout error fetching information - {exception}"
-            raise Doorking1812APApiClientCommunicationError(
-                msg,
-            ) from exception
-        except (aiohttp.ClientError, socket.gaierror) as exception:
-            msg = f"Error fetching information - {exception}"
-            raise Doorking1812APApiClientCommunicationError(
-                msg,
-            ) from exception
+        except Doorking1812APApiClientCommunicationError:
+            raise
         except Exception as exception:  # pylint: disable=broad-except
             msg = f"Something really wrong happened! - {exception}"
             raise Doorking1812APApiClientError(

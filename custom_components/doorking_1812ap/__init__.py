@@ -10,7 +10,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from homeassistant.const import CONF_IP_ADDRESS, Platform
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
 from .api import Doorking1812APApiClient
@@ -20,7 +19,7 @@ from .data import Doorking1812APData
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
 
-    from .data import IntegrationBlueprintConfigEntry
+    from .data import Doorking1812APConfigEntry
 
 PLATFORMS: list[Platform] = [
     Platform.SWITCH,
@@ -30,7 +29,7 @@ PLATFORMS: list[Platform] = [
 # https://developers.home-assistant.io/docs/config_entries_index/#setting-up-an-entry
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: IntegrationBlueprintConfigEntry,
+    entry: Doorking1812APConfigEntry,
 ) -> bool:
     """Set up this integration using UI."""
     coordinator = Doorking1812APDataUpdateCoordinator(
@@ -39,7 +38,6 @@ async def async_setup_entry(
     entry.runtime_data = Doorking1812APData(
         client=Doorking1812APApiClient(
             ip_address=entry.data[CONF_IP_ADDRESS],
-            session=async_get_clientsession(hass),
         ),
         integration=async_get_loaded_integration(hass, entry.domain),
         coordinator=coordinator,
@@ -56,7 +54,7 @@ async def async_setup_entry(
 
 async def async_unload_entry(
     hass: HomeAssistant,
-    entry: IntegrationBlueprintConfigEntry,
+    entry: Doorking1812APConfigEntry,
 ) -> bool:
     """Handle removal of an entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
@@ -64,7 +62,7 @@ async def async_unload_entry(
 
 async def async_reload_entry(
     hass: HomeAssistant,
-    entry: IntegrationBlueprintConfigEntry,
+    entry: Doorking1812APConfigEntry,
 ) -> None:
     """Reload config entry."""
     await async_unload_entry(hass, entry)

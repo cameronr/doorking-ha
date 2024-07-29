@@ -6,7 +6,6 @@ import voluptuous as vol
 from homeassistant import config_entries, data_entry_flow
 from homeassistant.const import CONF_IP_ADDRESS
 from homeassistant.helpers import selector
-from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .api import (
     Doorking1812APApiClient,
@@ -16,7 +15,7 @@ from .api import (
 from .const import DOMAIN, LOGGER
 
 
-class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+class Doorking1812APFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for Blueprint."""
 
     VERSION = 1
@@ -62,10 +61,9 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def _test_connection(self, ip_address: str) -> None:
-        """Validate credentials."""
+        """Test the connection."""
         client = Doorking1812APApiClient(
             ip_address=ip_address,
-            session=async_create_clientsession(self.hass),
         )
 
         await client.async_get_data()

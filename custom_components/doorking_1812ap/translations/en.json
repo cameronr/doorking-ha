@@ -2,9 +2,9 @@
   "config": {
     "step": {
       "user": {
-        "description": "If you need help with the configuration have a look here: https://github.com/cameronr/doorking-ha",
+        "description": "Enter the IP address of the Doorking 1812AP",
         "data": {
-          "ip": ""
+          "ip_address": "IP address"
         }
       }
     },
@@ -14,4 +14,3 @@
     }
   }
 }
-
